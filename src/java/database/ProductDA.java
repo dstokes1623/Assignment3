@@ -1,5 +1,9 @@
 package database;
 import domain.Product;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 public class ProductDA {
     private static ArrayList<Product> products = new ArrayList<Product>(5);
@@ -20,33 +24,31 @@ public class ProductDA {
         return products;
     }
     
-    public static void init() {
-        if (products.size() <= 0) {
-            Product p;
+   public static void init() {
+        try{
+            Product p = null;
             
-            p = new Product();
-            p.setCode("8601");
-            p.setDescription("86 (the band) - True Life Songs and Pictures");
-            p.setPrice(14.95);
-            p.add();
+            Connection connection = (Connection)
+            DriverManager.getConnection("jdbc:derby://localhost:1527/AssignmentDB","CIS640","cis640");
             
-            p = new Product();
-            p.setCode("pf01");
-            p.setDescription("Paddlefoot - The first CD");
-            p.setPrice(12.95);
-            p.add();
+            Statement statement = connection.createStatement();
+            ResultSet rs;
             
-            p = new Product();
-            p.setCode("pf02");
-            p.setDescription("Paddlefoot - The second CD");
-            p.setPrice(14.95);
-            p.add();
+            String sql = "Select Code, Description, Price " 
+                    + "from Product";
+            rs = statement.executeQuery(sql);
             
-            p = new Product();
-            p.setCode("jr01");
-            p.setDescription("Joe Rut - Genuine Wood Grained Finish");
-            p.setPrice(14.95);
-            p.add();
+            while (rs.next()) {
+                p = new Product();
+                p.setCode(rs.getString(1));
+                p.setDescription(rs.getString(2));
+                p.setPrice(rs.getDouble(3));
+                p.add();
+            }
+        }
+    
+        catch(Exception e){
+            System.out.println(e.getMessage());
         }
     }
 }

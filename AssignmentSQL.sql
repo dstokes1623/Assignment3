@@ -1,4 +1,4 @@
---drop table Product;
+drop table Product;
 CREATE TABLE Product (
   Code VARCHAR(10) NOT NULL,
   Description VARCHAR(50),
